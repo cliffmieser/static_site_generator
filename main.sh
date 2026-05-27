@@ -1,1 +1,1 @@
-python3 src/textnode.py
+python src/textnode.py
