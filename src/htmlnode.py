@@ -27,7 +27,7 @@ class HTMLNode:
         else:
             return 
     def __repr__(self):
-        print(f"Tag: {self.tag}\nValue: {self.value}\nChildren: {self.children}\nProps: {self.props}")
+        return f"Tag: {self.tag}\nValue: {self.value}\nChildren: {self.children}\nProps: {self.props}"
 
 
 class ParentNode(HTMLNode): 

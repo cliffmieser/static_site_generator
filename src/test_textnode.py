@@ -11,7 +11,7 @@ class TestTextNode(unittest.TestCase):
 
     def test_in(self):
         # Test if test_type exists
-        node  = TextNode("This is a text node", TextType.PLAIN)
+        node  = TextNode("This is a text node", TextType.TEXT)
         TextTypeNames = [member for member,name in TextType.__members__.items()]
         self.assertIn(node.text_type.name, TextTypeNames, f"{node.text_type} is valid!")
 

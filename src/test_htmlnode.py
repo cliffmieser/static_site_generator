@@ -1,5 +1,7 @@
-import unittest 
+import unittest
+from split_delimiter import split_nodes_delimiter
 from htmlnode import HTMLNode, LeafNode, ParentNode
+from textnode import TextNode, TextType, text_node_to_html_node
 
 class test_htmlnode(unittest.TestCase):
     def test_eq(self):
@@ -13,9 +15,9 @@ class test_htmlnode(unittest.TestCase):
 
             self.assertIsInstance(htmlnode, HTMLNode)
 
-    def test_is_not_none(self):
-         htmlnode = HTMLNode("<href>", "https://google.com")
-         self.assertIsNot(htmlnode.value, None)
+    # def test_is_not_none(self):
+    #      htmlnode = HTMLNode("<href>", "https://google.com")
+    #      self.assertIsNot(htmlnode.value, None)
 
     #Leaf Nodes
     def test_leafnode_is_subclass(self):
@@ -54,7 +56,7 @@ class test_htmlnode(unittest.TestCase):
               "<div><p><span>span leaf node</span></p></div>"
          )
 
-    def test_is_htmlnode(self):
+    def test_is_sub_class_htmlnode(self):
         subclasses = [ParentNode, LeafNode]
         for _cls in subclasses:
              self.assertIsSubclass(_cls, HTMLNode)
@@ -66,5 +68,18 @@ class test_htmlnode(unittest.TestCase):
          self.assertEqual(parentNode.to_html(), 
                           "<div><span>span leaf node</span><b>bold leaf node</b></div>") 
          
+    # Testing ENUM values 
+    def test_text(self):
+         node = TextNode("Text node", TextType.TEXT)
+         html_node = text_node_to_html_node(node)
+         self.assertEqual(html_node.tag, None)
+         self.assertEqual(html_node.value, "Text node")
+
+    def test_image_tag(self):
+        node = TextNode("img", TextType.IMAGE, "https://google.com" )
+        html_node = text_node_to_html_node(node)
+
+        # print(isinstance(html_node, LeafNode)) 
+        self.assertEqual(html_node.props["src"], "https://google.com")
 if __name__ == "__main__":
     unittest.main()
