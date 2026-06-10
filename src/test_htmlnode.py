@@ -1,5 +1,4 @@
 import unittest
-from split_delimiter import split_nodes_delimiter
 from htmlnode import HTMLNode, LeafNode, ParentNode
 from textnode import TextNode, TextType, text_node_to_html_node
 

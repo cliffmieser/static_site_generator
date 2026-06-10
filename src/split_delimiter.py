@@ -1,4 +1,4 @@
-from textnode import TextNode, TextType
+from textnode import TextNode, TextType, extract_markdown_images, extract_markdown_links
 import re
 
 def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: TextType) -> list[TextNode]:
@@ -30,15 +30,56 @@ def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: 
     return lst 
     
 
-def split_nodes_images():
-    pass 
+def split_nodes_images(old_nodes: list[TextNode]) -> list[TextNode]:
+    lst = [] # for storing textnodes
+    pattern = re.compile(r"!\[([^\[\]]*)\]\(([^\(\)]*)\)") # pattern for detecting image format
+    # loop through old nodes 
+    for node in old_nodes:
+        parts = pattern.split(node.text) # split raw text and image pattern if found 
+        for part in range(0, len(parts)):
+            print(f"Part: {parts[part]}")
+            if parts[part] == "":
+                continue #empty string 
+            elif parts[part] ==  extract_markdown_images(node.text)[0][0] and parts[part + 1] == extract_markdown_images(node.text)[0][1]:
+                print("image found") 
+                lst.append(TextNode(parts[part], TextType.IMAGE, parts[part + 1]))
+                part += 2 
+                if part > len(parts):
+                    continue
+                else:
+                    break
+            else:
+                lst.append(TextNode(parts[part], TextType.TEXT))
+    return lst
 
-def split_nodes_links():
-    pass
+def split_nodes_links(old_nodes: list[TextNode]) -> list[TextNode]:
+    lst = [] # for storing textnodes
+    pattern = re.compile(r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)") # pattern for links
+    # loop through old nodes 
+    for node in old_nodes:
+        parts = pattern.split(node.text) # split raw text and image pattern if found 
+        for part in range(0, len(parts)):
+            print(f"Part: {parts[part]}")
+            if parts[part] == "":
+                continue #empty string 
+            elif parts[part] ==  extract_markdown_links(node.text)[0][0] and parts[part + 1] == extract_markdown_links(node.text)[0][1]:
+                print("image found") 
+                lst.append(TextNode(parts[part], TextType.LINK, parts[part + 1]))
+                part += 2 
+                if part > len(parts):
+                    continue
+                else:
+                    break
+            else:
+                lst.append(TextNode(parts[part], TextType.TEXT))
+    return lst
+
 
 
 def main():
-    pass
+    node = TextNode("This is text with an ![image](https://i.imgur.com/zjjcJKZ.png)", TextType.TEXT)
+    # node = TextNode("This is text with no image", TextType.TEXT)
+    print(f"result: \n\n\t{split_nodes_images([node])}")
 
 if __name__ == "__main__":
     main()

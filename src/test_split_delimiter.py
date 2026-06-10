@@ -37,6 +37,7 @@ class test_split_delimiter(unittest.TestCase):
         is_text_node_check = True if False not in is_text_node else False 
         self.assertTrue(is_text_node_check)
 
-    # ignore links and images for now 
+    # Test split nodes images/links 
+    
 if __name__ == "__main__":
     unittest.main()
