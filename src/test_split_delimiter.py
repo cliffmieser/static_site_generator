@@ -1,6 +1,6 @@
 from textnode import TextNode, TextType 
 from htmlnode import HTMLNode, LeafNode, ParentNode  
-from split_delimiter import split_nodes_delimiter
+from src.inline_markdown import split_nodes_delimiter, split_nodes_images, split_nodes_links
 import unittest
 
 
@@ -38,6 +38,22 @@ class test_split_delimiter(unittest.TestCase):
         self.assertTrue(is_text_node_check)
 
     # Test split nodes images/links 
-    
+    def test_split_on_images(self):
+        node = TextNode("This is text with an ![image](https://i.imgur.com/zjjcJKZ.png)", TextType.TEXT)
+        result = split_nodes_images([node]) 
+        self.assertEqual(str(result), "[TextNode(This is text with an , TextType.TEXT, None), TextNode(image, TextType.IMAGE, https://i.imgur.com/zjjcJKZ.png)]")
+
+    def test_split_with_multiple_images(self):
+        node = TextNode("This is text with multiple images, first ![image](https://i.imgur.com/zjjcJKZ.png) and second ![image](https://i.imgur.com/bkadNLM.png)", TextType.TEXT)
+
+        result = split_nodes_images([node])
+        self.assertEqual(str(result), "[TextNode(This is text with multiple images, first , TextType.TEXT, None), TextNode(image, TextType.IMAGE, https://i.imgur.com/zjjcJKZ.png), TextNode( and second , TextType.TEXT, None), TextNode(image, TextType.IMAGE, https://i.imgur.com/bkadNLM.png)]")
+
+
+    def test_split_on_links(self):
+        node = TextNode("Here is a link to [google](https://www.google.com)", TextType.TEXT)
+        result = split_nodes_links([node])
+        self.assertEqual(str(result), "[TextNode(Here is a link to , TextType.TEXT, None), TextNode(google, TextType.LINK, https://www.google.com)]")
+
 if __name__ == "__main__":
     unittest.main()

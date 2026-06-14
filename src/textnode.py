@@ -1,14 +1,15 @@
 from enum import Enum 
 from htmlnode import LeafNode
 import re
+# from inline_markdown import *
 
 class TextType(Enum):
-	TEXT = ""
-	BOLD = "b" 
-	ITALIC = "i"
+	TEXT = "text"
+	BOLD = "bold" 
+	ITALIC = "italic"
 	CODE = "code"
-	LINK = "a" 
-	IMAGE = "img"
+	LINK = "link" 
+	IMAGE = "image"
 
 def extract_markdown_images(text):
 	""" Takes raw text and returns a list of tuples with each item having 
@@ -60,25 +61,16 @@ def text_node_to_html_node(text_node: TextNode) -> LeafNode: # Returns HTMLNode
 	elif text_node.text_type == TextType.TEXT: 
 		return LeafNode(None, text_node.text)
 	elif text_node.text_type == TextType.BOLD:
-		return LeafNode("b", text_node.text)
+		return LeafNode("bold", text_node.text)
 	elif text_node.text_type == TextType.ITALIC:
-		return LeafNode("i", text_node.text)
+		return LeafNode("italic", text_node.text)
 	elif text_node.text_type == TextType.CODE:
 		return LeafNode("code", text_node.text)
 	elif text_node.text_type == TextType.LINK:
-		return LeafNode("a", text_node.text, {"href": None})
+		return LeafNode("link", text_node.text, {"href": None})
 	elif text_node.text_type == TextType.IMAGE:
-		return LeafNode("img", text_node.text, {"src": text_node.url, "alt": text_node.text})
+		return LeafNode("image", text_node.text, {"src": text_node.url, "alt": text_node.text})
 
 	
 
-def main():
-	text_image = "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png)"
-	text_image2 = "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png), and another ![image](https://i.imgur.com/zjjcJKZ.png)"
-	extract_markdown_images(text_image2)
 
-	#text_link = "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
-	#extract_markdown_links(text_link)
-
-if __name__ == "__main__":
-	main()
