@@ -60,7 +60,7 @@ def split_nodes_images(old_nodes: list[TextNode]) -> list[TextNode]:
     return lst
 
 def split_nodes_links(old_nodes: list[TextNode]) -> list[TextNode]:
-    lst = [] # for storing textnodes
+    lst = [] # for storing textnodes 
     pattern = re.compile(r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)") # pattern for links
     # loop through old nodes 
     for node in old_nodes:
