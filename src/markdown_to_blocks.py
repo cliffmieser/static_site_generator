@@ -9,7 +9,6 @@ def markdown_to_blocks(markdown: str):
             continue 
         else: 
             blocks.append(cleaned)
-    print(f"Blocks: {blocks}")
     return blocks 
 
 

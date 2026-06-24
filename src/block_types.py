@@ -14,18 +14,18 @@ def block_to_block_type(markdown: str):
 
     if markdown.startswith(("# ", "## ", "### ", "#### ", "##### ", "###### ")):
         return BlockType.HEADING.value
-    if markdown.startswith("```\n") and markdown.endswith("\n```"):
+    elif markdown.startswith("```\n") and (markdown.endswith("\n```") or markdown.endswith("```")):
         return BlockType.CODE.value 
-    if markdown.startswith(">"):
+    elif markdown.startswith(">"):
         return BlockType.QUOTE.value
-    if lines[0].startswith("- "):
+    elif lines[0].startswith("- "):
         for line in lines:
             if line.startswith("- "):
                 continue 
             else: 
                 return False 
         return BlockType.UNORDERED_LIST.value 
-    if lines[0].startswith("1. "):
+    elif lines[0].startswith("1. "):
         for i in range(0, len(lines)):
             if i == 0:
                 continue 
@@ -33,5 +33,6 @@ def block_to_block_type(markdown: str):
                 continue
             else:
                 return False
-        return BlockType.ORDERED_LIST.value 
-    return BlockType.PARAGRAPH.value
+        return BlockType.ORDERED_LIST.value
+    else:  
+        return BlockType.PARAGRAPH.value

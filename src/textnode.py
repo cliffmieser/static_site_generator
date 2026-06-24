@@ -3,6 +3,8 @@ from htmlnode import LeafNode
 import re
 # from inline_markdown import *
 
+""" Textnodes: represents inline text"""
+
 class TextType(Enum):
 	TEXT = "text"
 	BOLD = "bold" 
