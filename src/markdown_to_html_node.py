@@ -1,39 +1,62 @@
 from markdown_to_blocks import markdown_to_blocks
 from block_types import block_to_block_type, BlockType 
 from htmlnode import HTMLNode, ParentNode, LeafNode
+from textnode import text_node_to_html_node, TextNode, TextType
+from inline_markdown import text_to_textnodes
+
+def print_textNode(textnode: TextNode): 
+    print(f"Text: {textnode.text}\nType: {textnode.text_type}")
+
 
 def markdown_to_html_node(markdown: str):
     """ Converts an entire document into a single HTMLNode"""
     blocks = markdown_to_blocks(markdown) # splits inline into blocks (based on double newline '\n\n')
-    print(blocks)
-    
+    block_nodes = []# should hold list of htmlnodes
+
     for block in blocks:
         block_type = block_to_block_type(block) # gets the inline-block "type" ie. code, italic, ect
-        print(block_type) 
-        # based on code block create HTMLNode with proper data 
-        match (block_type):
-            case "paragraph":
-                cleaned = remove_p_newlines(block)
-                leaf_node = HTMLNode("p", cleaned)
-                
-            case "heading":
-                pass 
-            case "code":
-                pass 
-            case "quote":
-                pass 
-            case "unordered_list":
-                pass 
-            case "ordered_list":
-                pass 
+        cleaned = remove_newlines(block) # remove newlines and whitespace 
+        text_nodes = text_to_textnodes(cleaned) # get list of text nodes for the current block 
+        children = convert_textnodes(text_nodes)
 
-def remove_p_newlines(markdown: str):
-    "Takes a markdown string and remove the new lines"
+
+        # based on code block create HTMLNode with proper data 
+        match block_type:
+            case "paragraph":
+                block_nodes.append(ParentNode("p", children))
+            case "heading":
+                level = len(block) - len(block.lstrip("#"))
+                block_nodes.append(ParentNode(f"h{level}", children))
+            case "code":
+                block_nodes.append(ParentNode("pre", [ParentNode("code", children)]))
+            case "quote":
+                block_nodes.append(ParentNode("blockquote", children))
+            case "unordered_list":
+                items = [ParentNode("li", convert_textnodes(text_to_textnodes(line[2:]))) for line in block.split("\n")]
+                block_nodes.append(ParentNode("ul", items))
+            case "ordered_list":
+                items = [ParentNode("li", convert_textnodes(text_to_textnodes(line[3:]))) for line in block.split("\n")]
+                block_nodes.append(ParentNode("ol", items))
+
+    return ParentNode("div", block_nodes)
+
+def remove_newlines(markdown: str):
+    "Takes a markdown string and remove the new lines and spaces"
     string = markdown.split("\n")
     cleaned_string = []
     for s in string: 
         cleaned_string.append(s.strip())
     return " ".join(cleaned_string)
+ 
+def convert_textnodes(textnodes: list): 
+    # helper function that takes list of text nodes and converts them to htmlnode based on text type 
+    htmlnodes = []
+    for node in textnodes:
+        node.text = node.text.strip()
+        htmlnode = text_node_to_html_node(node)
+        htmlnodes.append(htmlnode)
+
+    return htmlnodes
 
 
 

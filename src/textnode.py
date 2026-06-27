@@ -42,7 +42,7 @@ def extract_markdown_links(text):
 	return lst 
 
 
-class TextNode:
+class TextNode: #
 	def __init__(self, text, text_type, url=None):
 		self.text = text 
 		self.text_type = text_type # Text type given from class 
@@ -58,20 +58,20 @@ class TextNode:
 
 
 def text_node_to_html_node(text_node: TextNode) -> LeafNode: # Returns HTMLNode
-	if text_node.text_type not in TextType: 
+	if not isinstance(text_node.text_type, TextType):
 		raise ValueError(f"Text Type: ({text_node.text_type}) is not a valid type.")
 	elif text_node.text_type == TextType.TEXT: 
 		return LeafNode(None, text_node.text)
 	elif text_node.text_type == TextType.BOLD:
-		return LeafNode("bold", text_node.text)
+		return LeafNode("b", text_node.text)
 	elif text_node.text_type == TextType.ITALIC:
-		return LeafNode("italic", text_node.text)
+		return LeafNode("i", text_node.text)
 	elif text_node.text_type == TextType.CODE:
 		return LeafNode("code", text_node.text)
 	elif text_node.text_type == TextType.LINK:
-		return LeafNode("link", text_node.text, {"href": None})
+		return LeafNode("a", text_node.text, {"href": text_node.url})
 	elif text_node.text_type == TextType.IMAGE:
-		return LeafNode("image", text_node.text, {"src": text_node.url, "alt": text_node.text})
+		return LeafNode("image", "", {"src": text_node.url, "alt": text_node.text})
 
 	
 
