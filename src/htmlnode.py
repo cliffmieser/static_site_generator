@@ -47,6 +47,7 @@ class ParentNode(HTMLNode):
             children_html = ""
             for child in self.children:
                 children_html += child.to_html() 
+            # print(f"<{self.tag}{f"" if self.props is None else f" {self.props.to_html}"}>{children_html}</{self.tag}>")
             return f"<{self.tag}{f"" if self.props is None else f" {self.props.to_html}"}>{children_html}</{self.tag}>"
 
 class LeafNode(HTMLNode):

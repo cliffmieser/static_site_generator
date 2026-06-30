@@ -10,9 +10,9 @@ def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: 
         # if matching closing delimiter isn't found, raise exception 
         # get delimiters
         is_match = None 
-        txt = _.text.split(delimiter)
+        txt = _.text.split(delimiter) 
         is_match = len(txt) % 2 == 0 # to determine if matching delims exist
-        if is_match: # if True, raise error (unmatched delimiter)
+        if is_match and delimiter not in txt: # if True, raise error (unmatched delimiter)
             raise BaseException(f"Invalid markdown.\nAfter splitting text: {txt}")
         elif is_match == None:
             raise ValueError(f"is_match cannot be ({is_match}) type")
@@ -87,15 +87,13 @@ def split_nodes_links(old_nodes: list[TextNode]) -> list[TextNode]:
 
 
 def text_to_textnodes(text):
-	nodes = [TextNode(text, TextType.TEXT)] 
-	nodes = split_nodes_delimiter(nodes, "**", TextType.BOLD)
-	nodes = split_nodes_delimiter(nodes, "_", TextType.ITALIC)
-	nodes = split_nodes_delimiter(nodes, "`", TextType.CODE)
-	nodes = split_nodes_images(nodes)
-	nodes = split_nodes_links(nodes) 
-
-
-	return nodes
+    nodes = [TextNode(text, TextType.TEXT)]
+    nodes = split_nodes_delimiter(nodes, "**", TextType.BOLD)
+    nodes = split_nodes_delimiter(nodes, "_", TextType.ITALIC)
+    nodes = split_nodes_delimiter(nodes, "`", TextType.CODE)
+    nodes = split_nodes_images(nodes)
+    nodes = split_nodes_links(nodes)
+    return nodes
 
 
 def main():

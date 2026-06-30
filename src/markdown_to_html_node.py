@@ -3,7 +3,7 @@ from block_types import block_to_block_type, BlockType
 from htmlnode import HTMLNode, ParentNode, LeafNode
 from textnode import text_node_to_html_node, TextNode, TextType
 from inline_markdown import text_to_textnodes
-
+import textwrap
 def print_textNode(textnode: TextNode): 
     print(f"Text: {textnode.text}\nType: {textnode.text_type}")
 
@@ -15,9 +15,19 @@ def markdown_to_html_node(markdown: str):
 
     for block in blocks:
         block_type = block_to_block_type(block) # gets the inline-block "type" ie. code, italic, ect
+
+        if block_type == "code":
+            lines = block.split("\n")
+            inner_lines = lines[1:-1]  # drop the opening/closing ``` fence lines
+            code_content = textwrap.dedent("\n".join(inner_lines)) + "\n"
+            code_text_node = TextNode(code_content, TextType.TEXT)
+            code_child = text_node_to_html_node(code_text_node)
+            block_nodes.append(ParentNode("pre", [ParentNode("code", [code_child])]))
+            continue
+
         cleaned = remove_newlines(block) # remove newlines and whitespace 
         text_nodes = text_to_textnodes(cleaned) # get list of text nodes for the current block 
-        children = convert_textnodes(text_nodes)
+        children = convert_textnodes(text_nodes) # returns any child textnodes for the block
 
 
         # based on code block create HTMLNode with proper data 
@@ -27,8 +37,8 @@ def markdown_to_html_node(markdown: str):
             case "heading":
                 level = len(block) - len(block.lstrip("#"))
                 block_nodes.append(ParentNode(f"h{level}", children))
-            case "code":
-                block_nodes.append(ParentNode("pre", [ParentNode("code", children)]))
+            # case "code":
+            #     block_nodes.append(ParentNode("pre", [ParentNode("code", children)]))
             case "quote":
                 block_nodes.append(ParentNode("blockquote", children))
             case "unordered_list":
@@ -52,7 +62,6 @@ def convert_textnodes(textnodes: list):
     # helper function that takes list of text nodes and converts them to htmlnode based on text type 
     htmlnodes = []
     for node in textnodes:
-        node.text = node.text.strip()
         htmlnode = text_node_to_html_node(node)
         htmlnodes.append(htmlnode)
 
