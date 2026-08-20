@@ -47,7 +47,7 @@ class ParentNode(HTMLNode):
             children_html = ""
             for child in self.children:
                 children_html += child.to_html() 
-            # print(f"<{self.tag}{f"" if self.props is None else f" {self.props.to_html}"}>{children_html}</{self.tag}>")
+            
             return f"<{self.tag}{f"" if self.props is None else f" {self.props.to_html}"}>{children_html}</{self.tag}>"
 
 class LeafNode(HTMLNode):
@@ -57,15 +57,20 @@ class LeafNode(HTMLNode):
     def to_html(self):
         if self.value is None: 
             raise ValueError("All leaf nodes must have a value")
-        if self.tag is None: 
+        if self.tag is None: # Will just render the value (text)
             return f"{self.value}" 
-        
-        if self.props is not None:
-            tag = f"{self.tag}" # to append to original tag if not None
+        if self.props is not None: # contains attributes to be appended inside the tag
+            if self.tag == "img":
+                tag = "img"
+            else:
+                tag = f"{self.tag}" # to append to original tag if not None
+            
             attributes = [(attr, name) for attr, name in self.props.items()]
             if attributes:
                 for attr in attributes:
-                    tag += f" {attr[0]}={attr[1]}"
+                    tag += f" {attr[0]}='{attr[1]}'"
+                if self.tag == "img":
+                    return f"<{tag}>"
                 return f"<{tag}>{self.value}</{self.tag}>"
         return f"<{self.tag}>{self.value}</{self.tag}>"
 

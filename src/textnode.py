@@ -1,10 +1,10 @@
 from enum import Enum 
 from htmlnode import LeafNode
 import re
-# from inline_markdown import *
 
-""" Textnodes: represents inline text"""
 
+# set of symbolic names (members) bound to unqique values 
+# helps determine the type of html block is passed
 class TextType(Enum):
 	TEXT = "text"
 	BOLD = "bold" 
@@ -42,7 +42,8 @@ def extract_markdown_links(text):
 	return lst 
 
 
-class TextNode: #
+""" Textnodes: represents inline text"""
+class TextNode: # A pythonic representation of text that can be converted into HTMLndoes
 	def __init__(self, text, text_type, url=None):
 		self.text = text 
 		self.text_type = text_type # Text type given from class 
@@ -57,10 +58,10 @@ class TextNode: #
 		return f"TextNode({self.text}, {self.text_type}, {self.url})"
 
 
-def text_node_to_html_node(text_node: TextNode) -> LeafNode: # Returns HTMLNode
+def text_node_to_html_node(text_node: TextNode) -> LeafNode: # Returns HTMLNode (LeafNode)
 	if not isinstance(text_node.text_type, TextType):
 		raise ValueError(f"Text Type: ({text_node.text_type}) is not a valid type.")
-	elif text_node.text_type == TextType.TEXT: 
+	elif text_node.text_type == TextType.TEXT: # just text without any tag vale
 		return LeafNode(None, text_node.text)
 	elif text_node.text_type == TextType.BOLD:
 		return LeafNode("b", text_node.text)
@@ -71,7 +72,7 @@ def text_node_to_html_node(text_node: TextNode) -> LeafNode: # Returns HTMLNode
 	elif text_node.text_type == TextType.LINK:
 		return LeafNode("a", text_node.text, {"href": text_node.url})
 	elif text_node.text_type == TextType.IMAGE:
-		return LeafNode("image", "", {"src": text_node.url, "alt": text_node.text})
+		return LeafNode("img", "", {"src": text_node.url, "alt": text_node.text})
 
 	
 

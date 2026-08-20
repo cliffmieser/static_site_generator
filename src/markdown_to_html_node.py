@@ -1,9 +1,10 @@
 from markdown_to_blocks import markdown_to_blocks
-from block_types import block_to_block_type, BlockType 
-from htmlnode import HTMLNode, ParentNode, LeafNode
+from block_types import block_to_block_type
+from htmlnode import ParentNode
 from textnode import text_node_to_html_node, TextNode, TextType
 from inline_markdown import text_to_textnodes
 import textwrap
+
 def print_textNode(textnode: TextNode): 
     print(f"Text: {textnode.text}\nType: {textnode.text_type}")
 
@@ -35,12 +36,32 @@ def markdown_to_html_node(markdown: str):
             case "paragraph":
                 block_nodes.append(ParentNode("p", children))
             case "heading":
-                level = len(block) - len(block.lstrip("#"))
-                block_nodes.append(ParentNode(f"h{level}", children))
-            # case "code":
-            #     block_nodes.append(ParentNode("pre", [ParentNode("code", children)]))
+                level = len(block) - len(block.lstrip("#")) # holes the number of hashtags 
+
+                cleaned_hash = block[level:].strip() 
+                hash_nodes = text_to_textnodes(cleaned_hash)
+                hash_children = convert_textnodes(hash_nodes)
+
+
+                
+                block_nodes.append(ParentNode(f"h{level}", hash_children))
+
             case "quote":
-                block_nodes.append(ParentNode("blockquote", children))
+                quote_lst = block.split("\n") # split up the quotes on newlines
+
+                # clean up each quote line
+                for i in range(0, len(quote_lst)):
+                    if quote_lst[i].startswith("> "):
+                        quote_lst[i] = quote_lst[i][1:].strip()
+                    elif quote_lst[i].startswith(">"):
+                        quote_lst[i] = quote_lst[i][1:]
+            
+                # join quotes into single line and convert to textnodes
+                joined_quotes = " ".join(quote_lst)
+                quotes_textnodes = text_to_textnodes(joined_quotes) # converts to textnodes
+                quotes_children = convert_textnodes(quotes_textnodes)
+
+                block_nodes.append(ParentNode("blockquote", quotes_children))
             case "unordered_list":
                 items = [ParentNode("li", convert_textnodes(text_to_textnodes(line[2:]))) for line in block.split("\n")]
                 block_nodes.append(ParentNode("ul", items))
