@@ -5,7 +5,7 @@ import os
 # reference:
 # generate_page("./content/index.md", "./template.html", "./public/index.html") 
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, basepath):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
 
     # read markdown at from_path and store contents to variable 
@@ -26,12 +26,15 @@ def generate_page(from_path, template_path, dest_path):
     from_html_converted= template_data.replace("{{ Title }}", title)
     content_html = from_html_converted.replace("{{ Content }}", from_html_string)  # the full page 
 
+    content_html = content_html.replace('href="/', f'href="{basepath}')
+    content_html = content_html.replace('src="/', f'src="{basepath}')
+
     
     # write to page 
     with open(dest_path, "w") as f:
         if os.path.exists(dest_path) is False:
             # path doesn't exists yet 
-            os.makedirs(dest_path) 
+            os.makedirs(os.path.dirname(dest_path)) 
             f.write(content_html)
         else:
             f.write(content_html)
