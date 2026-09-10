@@ -27,16 +27,22 @@ def generate_page(from_path, template_path, dest_path, basepath):
     content_html = from_html_converted.replace("{{ Content }}", from_html_string)  # the full page 
 
     content_html = content_html.replace('href="/', f'href="{basepath}')
-    content_html = content_html.replace('src="/', f'src="{basepath}')
+    content_html = content_html.replace('src="/', f'src="{basepath}')   
 
     
-    # write to page 
-    with open(dest_path, "w") as f:
-        if os.path.exists(dest_path) is False:
-            # path doesn't exists yet 
-            os.makedirs(os.path.dirname(dest_path)) 
+    # write to page (check if parant exists)
+    if (os.path.exists(z := os.path.dirname(dest_path)) and dest_path in os.listdir(z)):
+        with open(dest_path, "w") as f:
+            if os.path.exists(dest_path) is False:
+                # path doesn't exists yet 
+                f.write(content_html)
+    else:
+        with open(dest_path, "w") as f:
+            os.makedirs(os.path.dirname(dest_path), exist_ok=True) 
             f.write(content_html)
-        else:
-            f.write(content_html)
+
+
+
+    
 
 
