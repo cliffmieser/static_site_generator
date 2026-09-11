@@ -31,15 +31,11 @@ def generate_page(from_path, template_path, dest_path, basepath):
 
     
     # write to page (check if parant exists)
-    if (os.path.exists(z := os.path.dirname(dest_path)) and dest_path in os.listdir(z)):
-        with open(dest_path, "w") as f:
-            if os.path.exists(dest_path) is False:
-                # path doesn't exists yet 
-                f.write(content_html)
-    else:
-        with open(dest_path, "w") as f:
-            os.makedirs(os.path.dirname(dest_path), exist_ok=True) 
-            f.write(content_html)
+    dest_dir =  os.path.dirname(dest_path)
+    if dest_dir:
+        os.makedirs(dest_dir, exist_ok=True)
+    with open(dest_path, "w") as f:
+        f.write(content_html)
 
 
 
