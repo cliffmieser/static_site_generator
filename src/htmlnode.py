@@ -68,7 +68,7 @@ class LeafNode(HTMLNode):
             attributes = [(attr, name) for attr, name in self.props.items()]
             if attributes:
                 for attr in attributes:
-                    tag += f" {attr[0]}='{attr[1]}'"
+                    tag += f' {attr[0]}="{attr[1]}"'
                 if self.tag == "img":
                     return f"<{tag}>"
                 return f"<{tag}>{self.value}</{self.tag}>"
